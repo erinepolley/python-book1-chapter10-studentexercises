@@ -8,6 +8,8 @@ class Student():
         self.slack = slack
         self.cohort = cohort
 
+
+
 # student = Student('Bart', 'Simpson', '@bart', 'Cohort 8')
 # print(f'{student.first_name} {student.last_name} is in {student.cohort}')
 
@@ -52,7 +54,7 @@ class Reports():
 # reports = StudentExerciseReports()
 # reports.all_students()
 
-#ANOTHER REPORT!!!!!!!!!!!!!!!!!!!!
+#BEAUTIFUL STUDENTS AND EXERCISES REPORT!!!!!!!!!!!!!!!!!!!!
     def exercises_with_students(self):
         """Retrieve all exercises and the students working on each one"""
 
@@ -124,7 +126,7 @@ class Reports():
 #EXERCISES REPORT!!!!!!!!!!!!!!!!!!!
     def all_exercises(self):
 
-        """Retrieve all cohort names"""
+        """Retrieve all exercises"""
 
         with sqlite3.connect(self.db_path) as conn:
             # conn.row_factory = self.create_student
@@ -143,10 +145,39 @@ class Reports():
             for exercise in all_exercises:
                     print(f'{exercise[1]}')
 
+# JAVASCRIPT REPORT!!!!!!!!!!!!!!!!!!!!
+    def all_javascript(self):
+
+        """Retrieve all cohort names"""
+
+        with sqlite3.connect(self.db_path) as conn:
+            # conn.row_factory = self.create_student
+
+            db_cursor = conn.cursor()
+
+            db_cursor.execute("""
+            select e.Id,
+                   e.Name,
+                   e.Language
+            from Exercise e  
+            """)
+
+            all_exercises = db_cursor.fetchall()
+
+            for exercise in all_exercises:
+                # print(exercise)
+                if exercise[2] == "JavaScript":
+                    print(f'{exercise[1]} is a JavaScript Exercise')
+                elif exercise[2] == "Python":
+                    print(f'{exercise[1]} is a Python Exercise')
+                elif exercise[2] == "SQL":
+                    print(f'{exercise[1]} is a SQL Exercise')
+
 
 reports = Reports()
 # reports.all_students()
 reports.exercises_with_students()
 reports.all_cohorts()
 reports.all_exercises()
+reports.all_javascript()
 
