@@ -17,6 +17,7 @@ class Reports():
 
     def create_instructor(self, cursor, row):
         return Instructor(row[1], row[2], row[3], row[4], row[6])
+
 #ONE REPORT!!!!!!!!!!!!!!!!!!#
     def all_students(self):
 
@@ -190,7 +191,36 @@ class Reports():
                 elif exercise[2] == "SQL":
                     print(f'{exercise[1]} is a SQL Exercise')
 
+    def students_with_exercises(self):
+        """Prints which exercises every student is working on"""
 
+        with sqlite3.connect(self.db_path) as conn:
+
+            db_cursor = conn.cursor()
+
+            db_cursor.execute("""
+                select
+                e.Id ExerciseId,
+                e.Name,
+                s.Id Student_Id,
+                s.First_name,
+                s.Last_name
+                from Exercise e
+                join AssignedExercises ae on ae.Exercise_Id = e.Id
+                join Student s on s.Id = ae.Student_Id
+                """)
+
+            all_students_with_exercises = db_cursor.fetchall()
+            print(all_students_with_exercises)
+            exercises = dict()
+
+            for student in all_students_with_exercises:
+                # exercise_id = student[0]
+                exercise_name = student[1]
+                # student_id = student[2]
+                student_name = f'{student[3]} {student[4]}'
+
+                if student_name not in exercises:
 reports = Reports()
 reports.all_students()
 reports.all_instructors()
@@ -198,6 +228,7 @@ reports.exercises_with_students()
 reports.all_cohorts()
 reports.all_exercises()
 reports.all_javascript()
+reports.students_with_exercises()
 
 
 
