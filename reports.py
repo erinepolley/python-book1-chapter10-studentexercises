@@ -1,14 +1,6 @@
 import sqlite3
-
-class Student():
-    def __init__(self, first_name, last_name, slack, cohort):
-        super().__init__()
-        self.first_name = first_name
-        self.last_name = last_name
-        self.slack = slack
-        self.cohort = cohort
-
-
+from students import Student
+from instructor import Instructor
 
 # student = Student('Bart', 'Simpson', '@bart', 'Cohort 8')
 # print(f'{student.first_name} {student.last_name} is in {student.cohort}')
@@ -23,6 +15,8 @@ class Reports():
     def create_student(self, cursor, row):
         return Student(row[1], row[2], row[3], row[5])
 
+    def create_instructor(self, cursor, row):
+        return Instructor(row[1], row[2], row[3], row[4], row[6])
 #ONE REPORT!!!!!!!!!!!!!!!!!!#
     def all_students(self):
 
@@ -48,11 +42,34 @@ class Reports():
             all_students = db_cursor.fetchall()
 
             for student in all_students:
-                    print(f'{student.first_name} {student.last_name} is in {student.cohort}')
+                    print(f'{student.first_name} {student.last_name} is in {student.cohort}.')
 
+#ALL INSTRUCTORS REPORT!!!!!!!!!!
+    def all_instructors(self):
+        """Retrieve all instructors and their cohorts."""
 
-# reports = StudentExerciseReports()
-# reports.all_students()
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = self.create_instructor
+
+            db_cursor = conn.cursor()
+
+            db_cursor.execute("""
+            select i.Id Instructor_Id,
+            i.First_name,
+            i.Last_name,
+            i.Slack_handle,
+            i.Specialty,
+            i.Cohort_Id,
+            c.Name
+            from Instructor i 
+            join Cohort c on i.Cohort_Id = c.Id
+            """)
+
+            all_instructors = db_cursor.fetchall()
+            # print(all_instructors)
+
+            for instructor in all_instructors:
+                print(f'{instructor.first_name} {instructor.last_name} is the fearless leader of {instructor.cohort}.')
 
 #BEAUTIFUL STUDENTS AND EXERCISES REPORT!!!!!!!!!!!!!!!!!!!!
     def exercises_with_students(self):
@@ -175,9 +192,12 @@ class Reports():
 
 
 reports = Reports()
-# reports.all_students()
+reports.all_students()
+reports.all_instructors()
 reports.exercises_with_students()
 reports.all_cohorts()
 reports.all_exercises()
 reports.all_javascript()
+
+
 
